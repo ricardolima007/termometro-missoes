@@ -20,7 +20,8 @@ button{ padding:12px 18px; border:none; border-radius:10px; font-size:16px; curs
 .primary{ background:var(--azul); color:#fff;}
 .ghost{ background:#eef4ff; color:#0b3d91;}
 #termometroPagina{ display:none; width:100%; height:100%; position:relative; background-position:center center; background-repeat:no-repeat; background-size:contain;}
-#temaTitulo{ position:absolute; top:20px; left:50%; transform:translateX(-50%); padding:8px 14px; border-radius:10px; background:rgba(255,255,255,0.75); font-weight:700; box-shadow:0 4px 12px var(--sombra); max-width:90%; text-align:center;}
+#topoValor{ position:absolute; top:20px; left:50%; transform:translateX(-50%); font-weight:900; font-size:28px; color:#1E90FF; text-shadow:1px 1px 4px rgba(0,0,0,0.3); text-align:center;}
+#temaTitulo{ position:absolute; top:70px; left:50%; transform:translateX(-50%); padding:8px 14px; border-radius:10px; background:rgba(255,255,255,0.75); font-weight:700; box-shadow:0 4px 12px var(--sombra); max-width:90%; text-align:center;}
 #termometroWrapper{ position:absolute; left:50%; bottom:80px; transform:translateX(-50%); width:min(95vw,980px); text-align:center;}
 #termometroContainer{ position:relative; width:100%; height:64px; border-radius:40px; overflow:hidden; border:3px solid #3d3d3d; background:linear-gradient(90deg,#eee,#ddd); box-shadow:inset 0 2px 8px rgba(0,0,0,0.15),0 6px 18px var(--sombra);}
 #preenchimento{ position:absolute; left:0; top:0; height:100%; width:0; border-radius:40px 0 0 40px; background:linear-gradient(90deg,var(--azul),#00CED1); background-size:200% 100%; animation:onda 2s linear infinite; box-shadow: inset 0 0 18px rgba(0,0,0,0.25);}
@@ -30,7 +31,6 @@ button{ padding:12px 18px; border:none; border-radius:10px; font-size:16px; curs
 #marcador .seta{ width:0;height:0;border-left:22px solid transparent;border-right:22px solid transparent;border-bottom:36px solid var(--azul); animation:spin 1.4s linear infinite,glow 1s ease-in-out infinite alternate; filter: drop-shadow(0 0 6px rgba(30,144,255,0.85));}
 @keyframes spin{ from{transform:rotate(0deg);} to{transform:rotate(360deg);} }
 @keyframes glow{ from{ filter:drop-shadow(0 0 4px #1E90FF);} to{ filter:drop-shadow(0 0 14px #00BFFF);} }
-#label{ margin-top:12px; font-weight:900; font-size:20px; color:#222; text-align:center;}
 #metaLabel{ position:absolute; right:12px; top:50%; transform:translateY(-50%); font-weight:700; font-size:16px; color:#8B0000; text-shadow:1px 1px 2px #fff;}
 .tick{ position:absolute; top:0; width:2px; height:100%; background:rgba(0,0,0,0.3); opacity:0; transition:opacity 0.3s;}
 .tickLabel{ position:absolute; font-size:14px; color:#fff; font-weight:900; top:50%; transform:translateX(-50%) translateY(-50%); opacity:0; transition:transform 0.5s ease-out, opacity 0.5s ease-out;}
@@ -39,7 +39,7 @@ button{ padding:12px 18px; border:none; border-radius:10px; font-size:16px; curs
   #bolinha{ width:22px; height:22px;}
   #marcador{ top:-58px;}
   #marcador .seta{ border-left:18px solid transparent;border-right:18px solid transparent;border-bottom:28px solid var(--azul);}
-  #label{ font-size:16px;}
+  #topoValor{ font-size:22px;}
   #metaLabel{ font-size:13px;}
   .tickLabel{ font-size:12px;}
 }
@@ -51,7 +51,7 @@ button{ padding:12px 18px; border:none; border-radius:10px; font-size:16px; curs
 <div class="card">
 <h2>Configuração do Termômetro</h2>
 <div class="grid">
-<div class="full"><label>Tema</label><input id="temaInput" type="text" value="Campanha de Missões Nacionais 2025"/></div>
+<div class="full"><label>Tema</label><input id="temaInput" type="text" value="Campanha de Missões Nacionais 2025 - IBCM"/></div>
 <div><label>Valor atual (R$)</label><input id="valorInput" type="number" min="0" max="4500" step="0.01" value="0"/></div>
 <div><label>Cor principal do líquido</label><input id="tuboCor" type="color" value="#1E90FF"/></div>
 <div class="full"><label>Tipo de fundo</label><select id="tipoFundo"><option value="degrade" selected>Degradê</option><option value="imagem">Imagem</option></select></div>
@@ -65,6 +65,7 @@ button{ padding:12px 18px; border:none; border-radius:10px; font-size:16px; curs
 </section>
 
 <section id="termometroPagina">
+<div id="topoValor">R$ 0,00 (0%)</div>
 <div id="temaTitulo"></div>
 <div id="termometroWrapper">
 <div id="termometroContainer">
@@ -74,15 +75,17 @@ button{ padding:12px 18px; border:none; border-radius:10px; font-size:16px; curs
 <div id="metaLabel">Meta: R$ 4.500,00</div>
 <div id="ruler"></div>
 </div>
-<div id="label">R$ 0,00 (0%)</div>
 </div>
 </section>
 
 <script>
+// === Código JavaScript ===
+// Igual à versão final anterior, apenas atualizando a referência do label:
 const MAX=4500;
 let fundoImagemDataURL=null;
 const elConfig=document.getElementById('config');
 const elTermo=document.getElementById('termometroPagina');
+const elTopoValor=document.getElementById('topoValor');
 const elTemaTitulo=document.getElementById('temaTitulo');
 const elValor=document.getElementById('valorInput');
 const elTuboCor=document.getElementById('tuboCor');
@@ -102,7 +105,6 @@ const container=document.getElementById('termometroContainer');
 const preench=document.getElementById('preenchimento');
 const bolinha=document.getElementById('bolinha');
 const marcador=document.getElementById('marcador');
-const label=document.getElementById('label');
 const ruler=document.getElementById('ruler');
 
 elTipoFundo.addEventListener('change',()=>{
@@ -144,7 +146,7 @@ function gerar(){
     const x=alvo*ease;
     preench.style.width=x+'px';
     const valNow=valor*ease; const percNow=Math.round(valNow/MAX*100);
-    label.textContent=`R$ ${valNow.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2})} (${percNow}%)`;
+    elTopoValor.textContent=`R$ ${valNow.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2})} (${percNow}%)`;
     const amp=Math.max(6,Math.min(12,container.clientHeight*0.15));
     const fase=dt*0.012; const yOffset=amp*Math.sin(fase);
     bolinha.style.left=x+'px'; bolinha.style.top=`calc(50% + ${yOffset}px)`;
@@ -172,7 +174,7 @@ function aplicarFundo(target,isPreview){
   const tipo=elTipoFundo.value;
   if(tipo==='degrade'){
     const a=elGradA.value||'#ffffff'; const b=elGradB.value||'#e6f0ff'; const dir=elGradDir.value||'to bottom';
-    target.style.backgroundImage=`linear-gradient(${dir},${a},${b})`; 
+    target.style.background=`linear-gradient(${dir},${a},${b})`; 
   }else{
     if(!fundoImagemDataURL && !isPreview) target.style.backgroundImage='linear-gradient(180deg,#ffffff,#f3f6fa)';
     else if(fundoImagemDataURL) target.style.backgroundImage=`url('${fundoImagemDataURL}')`;
