@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Campanha de Missões Nacionais 2025 - IBCM</title>
+<title>Campanha de Missões Nacionais 2025 -IBCM</title>
 
 <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/gif.js.optimized/dist/gif.js"></script>
@@ -11,7 +11,6 @@
 <style>
 :root{ --azul:#1E90FF; --sombra:rgba(0,0,0,0.25);}
 html,body{ margin:0; padding:0; height:100%; font-family:Arial; overflow:hidden;}
-/* Configuração */
 #config{ height:100%; display:flex; align-items:center; justify-content:center; background:linear-gradient(135deg,#fff,#f0f3f7); padding:20px;}
 .card{ width:clamp(300px,90vw,680px); background:#fff; border-radius:16px; box-shadow:0 10px 30px var(--sombra); padding:22px;}
 .grid{ display:grid; gap:12px; grid-template-columns:1fr 1fr;}
@@ -24,7 +23,6 @@ input[type="file"]{ width:100%;}
 button{ padding:12px 18px; border:none; border-radius:10px; font-size:16px; cursor:pointer;}
 .primary{ background:var(--azul); color:#fff;}
 .ghost{ background:#eef4ff; color:#0b3d91;}
-/* Termômetro */
 #termometroPagina{ display:none; width:100%; height:100%; position:relative; background-position:center center; background-repeat:no-repeat; background-size:cover;}
 #temaTitulo{ position:absolute; top:20px; left:50%; transform:translateX(-50%); padding:8px 14px; border-radius:10px; background:rgba(255,255,255,0.75); font-weight:700; box-shadow:0 4px 12px var(--sombra); max-width:90%; text-align:center;}
 #termometroWrapper{ position:absolute; left:50%; bottom:64px; transform:translateX(-50%); width:min(95vw,980px); text-align:center;}
@@ -58,7 +56,7 @@ button{ padding:12px 18px; border:none; border-radius:10px; font-size:16px; curs
 <div class="card">
 <h2>Configuração do Termômetro</h2>
 <div class="grid">
-<div class="full"><label>Tema</label><input id="temaInput" type="text" value="Campanha de Missões Nacionais 2025"/></div>
+<div class="full"><label>Tema</label><input id="temaInput" type="text" value="Campanha de Missoes Nacionais 2025"/></div>
 <div><label>Valor atual (R$)</label><input id="valorInput" type="number" min="0" max="4500" step="0.01" value="0"/></div>
 <div><label>Cor principal do líquido</label><input id="tuboCor" type="color" value="#1E90FF"/></div>
 <div class="full"><label>Tipo de fundo</label><select id="tipoFundo"><option value="degrade" selected>Degradê</option><option value="imagem">Imagem</option></select></div>
@@ -196,9 +194,15 @@ exportBtn.addEventListener('click',()=>{
       frameCount++;
       if(frameCount<frames) requestAnimationFrame(captureFrame);
       else{
-        gif.on('finished',blob=>{
-          const url=URL.createObjectURL(blob);
-          const a=document.createElement('a'); a.href=url; a.download='termometro.gif'; a.click();
+        gif.on('finished', blob => {
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = url;
+          a.download = 'termometro.gif';
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
+          URL.revokeObjectURL(url);
         });
         gif.render();
       }
@@ -207,7 +211,7 @@ exportBtn.addEventListener('click',()=>{
   captureFrame();
 });
 
-// Exportar MP4 avançado
+// Exportar MP4/WebM
 exportVideoBtn.addEventListener('click', async () => {
     const termoWrapper = document.getElementById('termometroWrapper');
     const valor = Number(elValor.value || 0);
@@ -223,13 +227,15 @@ exportVideoBtn.addEventListener('click', async () => {
 
     recorder.ondataavailable = e => { if(e.data.size>0) chunks.push(e.data); };
     recorder.onstop = () => {
-        const blob = new Blob(chunks,{type:'video/webm'});
+        const blob = new Blob(chunks, { type: 'video/webm' });
         const url = URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url;
-        a.download = 'termometro.mp4';
+        a.download = 'termometro.webm';
+        document.body.appendChild(a);
         a.click();
-
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
         exportVideoBtn.textContent = 'Exportar MP4';
         exportVideoBtn.disabled = false;
     };
