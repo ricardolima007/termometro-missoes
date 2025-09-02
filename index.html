@@ -1,10 +1,9 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<meta charset="UTF-8" />
+<meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>Campanha de Missões Nacionais 2025 - IBCM</title>
-
 <style>
 :root{ --azul:#1E90FF; --sombra:rgba(0,0,0,0.25);}
 html,body{ margin:0; padding:0; height:100%; font-family:Arial; overflow:hidden;}
@@ -22,7 +21,7 @@ button{ padding:12px 18px; border:none; border-radius:10px; font-size:16px; curs
 .ghost{ background:#eef4ff; color:#0b3d91;}
 #termometroPagina{ display:none; width:100%; height:100%; position:relative; background-position:center center; background-repeat:no-repeat; background-size:contain;}
 #temaTitulo{ position:absolute; top:20px; left:50%; transform:translateX(-50%); padding:8px 14px; border-radius:10px; background:rgba(255,255,255,0.75); font-weight:700; box-shadow:0 4px 12px var(--sombra); max-width:90%; text-align:center;}
-#termometroWrapper{ position:absolute; left:50%; bottom:64px; transform:translateX(-50%); width:min(95vw,980px); text-align:center;}
+#termometroWrapper{ position:absolute; left:50%; bottom:80px; transform:translateX(-50%); width:min(95vw,980px); text-align:center;}
 #termometroContainer{ position:relative; width:100%; height:64px; border-radius:40px; overflow:hidden; border:3px solid #3d3d3d; background:linear-gradient(90deg,#eee,#ddd); box-shadow:inset 0 2px 8px rgba(0,0,0,0.15),0 6px 18px var(--sombra);}
 #preenchimento{ position:absolute; left:0; top:0; height:100%; width:0; border-radius:40px 0 0 40px; background:linear-gradient(90deg,var(--azul),#00CED1); background-size:200% 100%; animation:onda 2s linear infinite; box-shadow: inset 0 0 18px rgba(0,0,0,0.25);}
 @keyframes onda{ from{background-position:0 0;} to{background-position:200% 0;} }
@@ -31,17 +30,18 @@ button{ padding:12px 18px; border:none; border-radius:10px; font-size:16px; curs
 #marcador .seta{ width:0;height:0;border-left:22px solid transparent;border-right:22px solid transparent;border-bottom:36px solid var(--azul); animation:spin 1.4s linear infinite,glow 1s ease-in-out infinite alternate; filter: drop-shadow(0 0 6px rgba(30,144,255,0.85));}
 @keyframes spin{ from{transform:rotate(0deg);} to{transform:rotate(360deg);} }
 @keyframes glow{ from{ filter:drop-shadow(0 0 4px #1E90FF);} to{ filter:drop-shadow(0 0 14px #00BFFF);} }
-#label{ margin-top:18px; font-weight:700; font-size:22px; color:#222; text-shadow:1px 1px 2px #fff;}
+#label{ margin-top:12px; font-weight:900; font-size:20px; color:#222; text-align:center;}
 #metaLabel{ position:absolute; right:12px; top:50%; transform:translateY(-50%); font-weight:700; font-size:16px; color:#8B0000; text-shadow:1px 1px 2px #fff;}
+.tick{ position:absolute; top:0; width:2px; height:100%; background:rgba(0,0,0,0.3); opacity:0; transition:opacity 0.3s;}
+.tickLabel{ position:absolute; font-size:14px; color:#fff; font-weight:900; top:50%; transform:translateX(-50%) translateY(-50%); opacity:0; transition:transform 0.5s ease-out, opacity 0.5s ease-out;}
 @media(max-width:640px){
   #termometroContainer{ height:48px; border-radius:32px;}
   #bolinha{ width:22px; height:22px;}
   #marcador{ top:-58px;}
   #marcador .seta{ border-left:18px solid transparent;border-right:18px solid transparent;border-bottom:28px solid var(--azul);}
-  #label{ font-size:17px;}
+  #label{ font-size:16px;}
   #metaLabel{ font-size:13px;}
-  #temaTitulo{ font-size:16px;}
-  #termometroWrapper{ bottom:48px; width:95vw;}
+  .tickLabel{ font-size:12px;}
 }
 </style>
 </head>
@@ -72,13 +72,15 @@ button{ padding:12px 18px; border:none; border-radius:10px; font-size:16px; curs
 <div id="bolinha"></div>
 <div id="marcador"><div class="seta"></div></div>
 <div id="metaLabel">Meta: R$ 4.500,00</div>
+<div id="ruler"></div>
 </div>
 <div id="label">R$ 0,00 (0%)</div>
 </div>
 </section>
 
 <script>
-const MAX=4500; let fundoImagemDataURL=null;
+const MAX=4500;
+let fundoImagemDataURL=null;
 const elConfig=document.getElementById('config');
 const elTermo=document.getElementById('termometroPagina');
 const elTemaTitulo=document.getElementById('temaTitulo');
@@ -95,11 +97,13 @@ const elBlkDegDir=document.getElementById('blkDegradeDir');
 const elFile=document.getElementById('fundoPagina');
 const elGerar=document.getElementById('gerarBtn');
 const elPreview=document.getElementById('previewBtn');
+
 const container=document.getElementById('termometroContainer');
 const preench=document.getElementById('preenchimento');
 const bolinha=document.getElementById('bolinha');
 const marcador=document.getElementById('marcador');
 const label=document.getElementById('label');
+const ruler=document.getElementById('ruler');
 
 elTipoFundo.addEventListener('change',()=>{
   const isImg=elTipoFundo.value==='imagem';
@@ -129,8 +133,9 @@ function gerar(){
   elConfig.style.display='none'; elTermo.style.display='block';
   aplicarFundo(elTermo,false);
   const prim=elTuboCor.value||'#1E90FF';
-  const sec='#00CED1';
-  preench.style.background=`linear-gradient(90deg,${prim},${sec})`;
+  preench.style.background=`linear-gradient(90deg,${prim},#00CED1)`;
+  criarRegua();
+
   const W=container.clientWidth; const alvo=W*(valor/MAX);
   let t0;
   function animar(ts){
@@ -144,20 +149,20 @@ function gerar(){
     const fase=dt*0.012; const yOffset=amp*Math.sin(fase);
     bolinha.style.left=x+'px'; bolinha.style.top=`calc(50% + ${yOffset}px)`;
     marcador.style.left=x+'px';
+    animarRuler(x);
     if(p<1) requestAnimationFrame(animar);
-    else iniciarLoopSeguimento(x);
+    else iniciarLoop(x);
   }
   requestAnimationFrame(animar);
 }
 
-function iniciarLoopSeguimento(xFinal){
+function iniciarLoop(xFinal){
   let t=0;
   function loop(){ t+=16;
     const amp=Math.max(6,Math.min(12,container.clientHeight*0.15));
     const yOffset=amp*Math.sin(t*0.012);
     bolinha.style.left=xFinal+'px';
     bolinha.style.top=`calc(50% + ${yOffset}px)`;
-    marcador.style.left=xFinal+'px';
     requestAnimationFrame(loop);
   }
   requestAnimationFrame(loop);
@@ -175,6 +180,30 @@ function aplicarFundo(target,isPreview){
     target.style.backgroundRepeat='no-repeat';
     target.style.backgroundPosition='center center';
   }
+}
+
+function criarRegua(){
+  ruler.innerHTML='';
+  const divs=9; 
+  for(let i=0;i<=divs;i++){
+    const tick=document.createElement('div'); tick.className='tick'; tick.style.left=(i/divs*100)+'%';
+    const tickLabel=document.createElement('div'); tickLabel.className='tickLabel'; tickLabel.style.left=(i/divs*100)+'%';
+    tickLabel.textContent='R$ '+(i*500).toLocaleString('pt-BR');
+    ruler.appendChild(tick); ruler.appendChild(tickLabel);
+  }
+}
+
+function animarRuler(x){
+  const ticks = ruler.querySelectorAll('.tick');
+  const labels = ruler.querySelectorAll('.tickLabel');
+  const W=container.clientWidth;
+  ticks.forEach((tick,i)=>{
+    if(x >= (i/9)*W){ 
+      tick.style.opacity=1; 
+      labels[i].style.opacity=1; 
+      labels[i].style.transform='translateX(-50%) translateY(-50%)'; 
+    }
+  });
 }
 </script>
 </body>
