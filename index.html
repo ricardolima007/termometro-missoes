@@ -1,212 +1,365 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
 <title>Campanha de Missões Nacionais 2025 - IBCM</title>
 <style>
-:root{ --azul:#1E90FF; --sombra:rgba(0,0,0,0.25);}
-html,body{ margin:0; padding:0; height:100%; font-family:Arial; overflow:hidden;}
-#config{ height:100%; display:flex; align-items:center; justify-content:center; background:linear-gradient(135deg,#fff,#f0f3f7); padding:20px;}
-.card{ width:clamp(300px,90vw,680px); background:#fff; border-radius:16px; box-shadow:0 10px 30px var(--sombra); padding:22px;}
-.grid{ display:grid; gap:12px; grid-template-columns:1fr 1fr;}
-.grid>.full{ grid-column:1/-1;}
-label{ font-size:14px; color:#333; margin-bottom:6px; display:block;}
-input[type="text"],input[type="number"],select{ width:100%; padding:10px 12px; border-radius:10px; border:1px solid #d7dbe0; font-size:16px;}
-input[type="color"]{ width:100%; height:42px; border:none; border-radius:10px; box-shadow: inset 0 0 0 1px #d7dbe0;}
-input[type="file"]{ width:100%;}
-.actions{ display:flex; gap:12px; justify-content:flex-end; margin-top:14px;}
-button{ padding:12px 18px; border:none; border-radius:10px; font-size:16px; cursor:pointer;}
-.primary{ background:var(--azul); color:#fff;}
-.ghost{ background:#eef4ff; color:#0b3d91;}
-#termometroPagina{ display:none; width:100%; height:100%; position:relative; background-position:center center; background-repeat:no-repeat; background-size:contain;}
-#topoValor{ position:absolute; top:20px; left:50%; transform:translateX(-50%); font-weight:900; font-size:28px; color:#1E90FF; text-shadow:1px 1px 4px rgba(0,0,0,0.3); text-align:center;}
-#temaTitulo{ position:absolute; top:70px; left:50%; transform:translateX(-50%); padding:8px 14px; border-radius:10px; background:rgba(255,255,255,0.75); font-weight:700; box-shadow:0 4px 12px var(--sombra); max-width:90%; text-align:center;}
-#termometroWrapper{ position:absolute; left:50%; bottom:80px; transform:translateX(-50%); width:min(95vw,980px); text-align:center;}
-#termometroContainer{ position:relative; width:100%; height:64px; border-radius:40px; overflow:hidden; border:3px solid #3d3d3d; background:linear-gradient(90deg,#eee,#ddd); box-shadow:inset 0 2px 8px rgba(0,0,0,0.15),0 6px 18px var(--sombra);}
-#preenchimento{ position:absolute; left:0; top:0; height:100%; width:0; border-radius:40px 0 0 40px; background:linear-gradient(90deg,var(--azul),#00CED1); background-size:200% 100%; animation:onda 2s linear infinite; box-shadow: inset 0 0 18px rgba(0,0,0,0.25);}
-@keyframes onda{ from{background-position:0 0;} to{background-position:200% 0;} }
-#bolinha{ position:absolute; top:50%; left:0; transform:translate(-50%,-50%); width:28px; height:28px; border-radius:50%; background: radial-gradient(circle,#FFD700 15%,#FFA500 60%,#FF8C00 100%); box-shadow:0 0 10px rgba(0,0,0,0.35);}
-#marcador{ position:absolute; top:-72px; left:0; transform:translateX(-50%);}
-#marcador .seta{ width:0;height:0;border-left:22px solid transparent;border-right:22px solid transparent;border-bottom:36px solid var(--azul); animation:spin 1.4s linear infinite,glow 1s ease-in-out infinite alternate; filter: drop-shadow(0 0 6px rgba(30,144,255,0.85));}
-@keyframes spin{ from{transform:rotate(0deg);} to{transform:rotate(360deg);} }
-@keyframes glow{ from{ filter:drop-shadow(0 0 4px #1E90FF);} to{ filter:drop-shadow(0 0 14px #00BFFF);} }
-#metaLabel{ position:absolute; right:12px; top:50%; transform:translateY(-50%); font-weight:700; font-size:16px; color:#8B0000; text-shadow:1px 1px 2px #fff;}
-.tick{ position:absolute; top:0; width:2px; height:100%; background:rgba(0,0,0,0.3); opacity:0; transition:opacity 0.3s;}
-.tickLabel{ position:absolute; font-size:14px; color:#fff; font-weight:900; top:50%; transform:translateX(-50%) translateY(-50%); opacity:0; transition:transform 0.5s ease-out, opacity 0.5s ease-out;}
-@media(max-width:640px){
-  #termometroContainer{ height:48px; border-radius:32px;}
-  #bolinha{ width:22px; height:22px;}
-  #marcador{ top:-58px;}
-  #marcador .seta{ border-left:18px solid transparent;border-right:18px solid transparent;border-bottom:28px solid var(--azul);}
-  #topoValor{ font-size:22px;}
-  #metaLabel{ font-size:13px;}
-  .tickLabel{ font-size:12px;}
-}
+  :root{ --azul:#1E90FF; --sombra: rgba(0,0,0,0.22); --textoClaro: #fff; }
+  html,body{ height:100%; margin:0; font-family:Arial,Helvetica,sans-serif; -webkit-font-smoothing:antialiased; }
+  /* CONFIG */
+  #config{ min-height:100vh; display:flex; align-items:center; justify-content:center; background:linear-gradient(135deg,#f6f8fb,#eef4ff); padding:20px; box-sizing:border-box; }
+  .card{ width:clamp(320px,86vw,760px); background:#fff; border-radius:14px; box-shadow:0 12px 30px var(--sombra); padding:20px; box-sizing:border-box; }
+  h2{ margin:0 0 12px 0; font-size:20px; color:#111; }
+  .grid{ display:grid; grid-template-columns:1fr 1fr; gap:10px; align-items:start; }
+  .grid .full{ grid-column:1/-1; }
+  label{ display:block; font-size:13px; color:#333; margin-bottom:6px; }
+  input[type="text"], input[type="number"], select { width:100%; padding:10px 12px; border-radius:8px; border:1px solid #d7dbe0; font-size:15px; box-sizing:border-box; }
+  input[type="color"]{ width:100%; height:40px; border:none; padding:0; border-radius:8px; }
+  input[type="file"]{ width:100%; }
+  .actions{ display:flex; gap:10px; justify-content:flex-end; margin-top:12px; }
+  button{ padding:10px 14px; border-radius:10px; border:0; cursor:pointer; font-weight:700; }
+  .primary{ background:var(--azul); color:#fff; }
+  .ghost{ background:#eef4ff; color:#0b3d91; }
+
+  /* TERMÔMETRO (página) */
+  #termometroPagina{ display:none; width:100%; height:100vh; position:relative; background-position:center center; background-repeat:no-repeat; background-size:contain; box-sizing:border-box; }
+  #topoValor{ position:absolute; top:18px; left:50%; transform:translateX(-50%); font-weight:900; font-size:26px; color:var(--azul); text-shadow: 0 1px 3px rgba(0,0,0,0.15); z-index:40; text-align:center; }
+  #temaTitulo{ position:absolute; top:64px; left:50%; transform:translateX(-50%); padding:8px 14px; border-radius:10px; background:rgba(255,255,255,0.75); font-weight:700; box-shadow:0 6px 18px rgba(0,0,0,0.12); z-index:40; }
+  #termometroWrapper{ position:absolute; left:50%; bottom:80px; transform:translateX(-50%); width:min(95vw,980px); text-align:center; z-index:30; }
+  #termometroContainer{ position:relative; width:100%; height:64px; border-radius:40px; overflow:hidden; border:3px solid rgba(0,0,0,0.18); background:linear-gradient(90deg,#eee,#ddd); box-shadow: inset 0 2px 8px rgba(0,0,0,0.12), 0 10px 30px rgba(0,0,0,0.06); }
+  #preenchimento{ position:absolute; left:0; top:0; height:100%; width:0; border-radius:40px 0 0 40px; background:linear-gradient(90deg,var(--azul),#00CED1); background-size:200% 100%; animation:onda 2s linear infinite; box-shadow: inset 0 0 18px rgba(0,0,0,0.18); transition: width 0.18s linear; }
+  @keyframes onda{ from{background-position:0 0;} to{background-position:200% 0;} }
+  #bolinha{ position:absolute; top:50%; left:0; transform:translate(-50%,-50%); width:28px; height:28px; border-radius:50%; background: radial-gradient(circle,#FFD700 15%,#FFA500 60%,#FF8C00 100%); box-shadow:0 4px 12px rgba(0,0,0,0.25); z-index:35; }
+  #marcador{ position:absolute; top:-72px; left:0; transform:translateX(-50%); z-index:36; pointer-events:none; }
+  #marcador .seta{ width:0;height:0;border-left:22px solid transparent;border-right:22px solid transparent;border-bottom:36px solid var(--azul); animation:spin 1.4s linear infinite,glow 1s ease-in-out infinite alternate; filter: drop-shadow(0 0 6px rgba(30,144,255,0.9)); }
+  @keyframes spin{ from{transform:rotate(0deg);} to{transform:rotate(360deg);} }
+  @keyframes glow{ from{ filter:drop-shadow(0 0 4px #1E90FF);} to{ filter:drop-shadow(0 0 14px #00BFFF);} }
+
+  /* valor no centro (sobre o preenchimento) - mas usamos topo para o valor principal */
+  #valorCentro{ position:absolute; width:100%; top:50%; left:50%; transform:translate(-50%,-50%); text-align:center; font-weight:900; color:#fff; z-index:33; pointer-events:none; text-shadow:0 1px 6px rgba(0,0,0,0.4); }
+
+  #metaLabel{ position:absolute; right:12px; top:50%; transform:translateY(-50%); font-weight:700; font-size:14px; color:#8B0000; text-shadow:1px 1px 2px rgba(255,255,255,0.6); z-index:34; }
+
+  /* régua interna */
+  #ruler{ position:absolute; left:0; top:0; width:100%; height:100%; z-index:32; pointer-events:none; }
+  .tick{ position:absolute; top:0; width:2px; height:100%; background:rgba(0,0,0,0.25); opacity:0; transition:opacity 0.3s ease; }
+  .tickLabel{ position:absolute; top:50%; transform:translate(-50%,12px); font-weight:900; font-size:13px; color:var(--textoClaro); opacity:0; transition:transform 0.45s ease, opacity 0.45s ease; white-space:nowrap; text-shadow:0 1px 3px rgba(0,0,0,0.35); z-index:38; pointer-events:none; }
+
+  /* porcentagem abaixo (se quiser também) */
+  #porcentagemAbaixo{ position:absolute; bottom:18px; left:50%; transform:translateX(-50%); font-weight:900; font-size:18px; color:#222; z-index:40; text-shadow:0 1px 2px rgba(255,255,255,0.8); }
+
+  @media(max-width:640px){
+    #termometroWrapper{ bottom:64px; width:95vw; }
+    #preenchimento{ transition: none; }
+    #topoValor{ font-size:20px; top:12px; }
+    #temaTitulo{ top:52px; font-size:15px; padding:6px 10px; }
+    .tickLabel{ font-size:12px; }
+    #porcentagemAbaixo{ font-size:16px; bottom:12px; }
+  }
 </style>
 </head>
 <body>
 
+<!-- CONFIG -->
 <section id="config">
-<div class="card">
-<h2>Configuração do Termômetro</h2>
-<div class="grid">
-<div class="full"><label>Tema</label><input id="temaInput" type="text" value="Campanha de Missões Nacionais 2025 - IBCM"/></div>
-<div><label>Valor atual (R$)</label><input id="valorInput" type="number" min="0" max="4500" step="0.01" value="0"/></div>
-<div><label>Cor principal do líquido</label><input id="tuboCor" type="color" value="#1E90FF"/></div>
-<div class="full"><label>Tipo de fundo</label><select id="tipoFundo"><option value="degrade" selected>Degradê</option><option value="imagem">Imagem</option></select></div>
-<div id="blkDegrade1"><label>Cor 1</label><input id="gradA" type="color" value="#ffffff"/></div>
-<div id="blkDegrade2"><label>Cor 2</label><input id="gradB" type="color" value="#e6f0ff"/></div>
-<div class="full" id="blkDegradeDir"><label>Direção do degradê</label><select id="gradDir"><option value="to right">→</option><option value="to left">←</option><option value="to bottom" selected>↓</option><option value="to top">↑</option><option value="135deg">Diagonal 135°</option><option value="45deg">Diagonal 45°</option></select></div>
-<div class="full hidden" id="blkImagem"><label>Fundo da página</label><input id="fundoPagina" type="file" accept="image/*"/></div>
-</div>
-<div class="actions"><button class="ghost" id="previewBtn">Pré-visualizar fundo</button><button class="primary" id="gerarBtn">Gerar Termômetro</button></div>
-</div>
+  <div class="card">
+    <h2>Configuração do Termômetro</h2>
+    <div class="grid">
+      <div class="full">
+        <label>Tema</label>
+        <input id="temaInput" type="text" value="Campanha de Missões Nacionais 2025 - IBCM" />
+      </div>
+
+      <div>
+        <label>Valor atual (R$)</label>
+        <input id="valorInput" type="number" min="0" max="4500" step="0.01" value="0" />
+      </div>
+
+      <div>
+        <label>Cor principal do líquido</label>
+        <input id="tuboCor" type="color" value="#1E90FF" />
+      </div>
+
+      <div class="full">
+        <label>Tipo de fundo</label>
+        <select id="tipoFundo">
+          <option value="padrao">Padrão automático (PC / Mobile)</option>
+          <option value="degrade">Degradê</option>
+          <option value="imagem">Imagem (upload)</option>
+        </select>
+      </div>
+
+      <div id="blkDegrade1">
+        <label>Cor 1 (degradê)</label>
+        <input id="gradA" type="color" value="#ffffff" />
+      </div>
+
+      <div id="blkDegrade2">
+        <label>Cor 2 (degradê)</label>
+        <input id="gradB" type="color" value="#e6f0ff" />
+      </div>
+
+      <div class="full" id="blkDegradeDir">
+        <label>Direção do degradê</label>
+        <select id="gradDir">
+          <option value="to bottom">↓ (vertical)</option>
+          <option value="to right">→ (horizontal)</option>
+          <option value="135deg">Diagonal 135°</option>
+          <option value="45deg">Diagonal 45°</option>
+        </select>
+      </div>
+
+      <div class="full hidden" id="blkImagem">
+        <label>Fundo da página (imagem)</label>
+        <input id="fundoPagina" type="file" accept="image/*" />
+      </div>
+    </div>
+
+    <div class="actions">
+      <button class="ghost" id="previewBtn">Pré-visualizar fundo</button>
+      <button class="primary" id="gerarBtn">Gerar Termômetro</button>
+    </div>
+  </div>
 </section>
 
+<!-- TERMÔMETRO -->
 <section id="termometroPagina">
-<div id="topoValor">R$ 0,00 (0%)</div>
-<div id="temaTitulo"></div>
-<div id="termometroWrapper">
-<div id="termometroContainer">
-<div id="preenchimento"></div>
-<div id="bolinha"></div>
-<div id="marcador"><div class="seta"></div></div>
-<div id="metaLabel">Meta: R$ 4.500,00</div>
-<div id="ruler"></div>
-</div>
-</div>
+  <div id="topoValor">R$ 0,00 (0%)</div>
+  <div id="temaTitulo"></div>
+
+  <div id="termometroWrapper">
+    <div id="termometroContainer">
+      <div id="preenchimento"></div>
+      <div id="bolinha"></div>
+      <div id="marcador"><div class="seta"></div></div>
+      <div id="metaLabel">Meta: R$ 4.500,00</div>
+      <div id="ruler"></div>
+      <div id="valorCentro" aria-hidden="true"></div>
+    </div>
+  </div>
+
+  <div id="porcentagemAbaixo"></div>
 </section>
 
 <script>
-// === Código JavaScript ===
-// Igual à versão final anterior, apenas atualizando a referência do label:
-const MAX=4500;
-let fundoImagemDataURL=null;
-const elConfig=document.getElementById('config');
-const elTermo=document.getElementById('termometroPagina');
-const elTopoValor=document.getElementById('topoValor');
-const elTemaTitulo=document.getElementById('temaTitulo');
-const elValor=document.getElementById('valorInput');
-const elTuboCor=document.getElementById('tuboCor');
-const elTipoFundo=document.getElementById('tipoFundo');
-const elGradA=document.getElementById('gradA');
-const elGradB=document.getElementById('gradB');
-const elGradDir=document.getElementById('gradDir');
-const elBlkImg=document.getElementById('blkImagem');
-const elBlkDeg1=document.getElementById('blkDegrade1');
-const elBlkDeg2=document.getElementById('blkDegrade2');
-const elBlkDegDir=document.getElementById('blkDegradeDir');
-const elFile=document.getElementById('fundoPagina');
-const elGerar=document.getElementById('gerarBtn');
-const elPreview=document.getElementById('previewBtn');
+/* ====== Configurações ====== */
+const MAX = 4500;
+let fundoImagemDataURL = null;
 
-const container=document.getElementById('termometroContainer');
-const preench=document.getElementById('preenchimento');
-const bolinha=document.getElementById('bolinha');
-const marcador=document.getElementById('marcador');
-const ruler=document.getElementById('ruler');
+/* Elements */
+const elConfig = document.getElementById('config');
+const elTermo = document.getElementById('termometroPagina');
+const elTemaTitulo = document.getElementById('temaTitulo');
+const elTopoValor = document.getElementById('topoValor');
+const elPorcAbaixo = document.getElementById('porcentagemAbaixo');
 
-elTipoFundo.addEventListener('change',()=>{
-  const isImg=elTipoFundo.value==='imagem';
-  elBlkImg.classList.toggle('hidden',!isImg);
-  elBlkDeg1.classList.toggle('hidden',isImg);
-  elBlkDeg2.classList.toggle('hidden',isImg);
-  elBlkDegDir.classList.toggle('hidden',isImg);
+const elValor = document.getElementById('valorInput');
+const elTuboCor = document.getElementById('tuboCor');
+const elTipoFundo = document.getElementById('tipoFundo');
+const elGradA = document.getElementById('gradA');
+const elGradB = document.getElementById('gradB');
+const elGradDir = document.getElementById('gradDir');
+const elBlkImg = document.getElementById('blkImagem');
+const elBlkDeg1 = document.getElementById('blkDegrade1');
+const elBlkDeg2 = document.getElementById('blkDegrade2');
+const elBlkDegDir = document.getElementById('blkDegradeDir');
+const elFile = document.getElementById('fundoPagina');
+const elPreview = document.getElementById('previewBtn');
+const elGerar = document.getElementById('gerarBtn');
+
+const container = document.getElementById('termometroContainer');
+const preench = document.getElementById('preenchimento');
+const bolinha = document.getElementById('bolinha');
+const marcador = document.getElementById('marcador');
+const ruler = document.getElementById('ruler');
+const valorCentro = document.getElementById('valorCentro');
+
+/* Toggle opções de fundo */
+elTipoFundo.addEventListener('change', ()=>{
+  const isImg = elTipoFundo.value === 'imagem';
+  elBlkImg.classList.toggle('hidden', !isImg);
+  elBlkDeg1.classList.toggle('hidden', isImg);
+  elBlkDeg2.classList.toggle('hidden', isImg);
+  elBlkDegDir.classList.toggle('hidden', isImg);
 });
-elFile.addEventListener('change',e=>{
-  const f=e.target.files?.[0]; if(!f) return;
-  const r=new FileReader();
-  r.onload=ev=>{fundoImagemDataURL=ev.target.result;}
+
+/* Ler arquivo enviado */
+elFile.addEventListener('change', e=>{
+  const f = e.target.files?.[0];
+  if(!f) return;
+  const r = new FileReader();
+  r.onload = ev => { fundoImagemDataURL = ev.target.result; };
   r.readAsDataURL(f);
 });
-elPreview.addEventListener('click',()=>{
-  aplicarFundo(elTermo,true);
-  elConfig.style.display='none';
-  elTermo.style.display='block';
-  setTimeout(()=>{elTermo.style.display='none'; elConfig.style.display='flex';},1200);
+
+/* Preview rápido */
+elPreview.addEventListener('click', ()=>{
+  aplicarFundo(elTermo, true);
+  elConfig.style.display = 'none';
+  elTermo.style.display = 'block';
+  setTimeout(()=>{ elTermo.style.display='none'; elConfig.style.display='flex'; }, 1200);
 });
-elGerar.addEventListener('click',gerar);
+
+/* Gerar termômetro */
+elGerar.addEventListener('click', gerar);
+
+/* Reaplica fundo no resize quando usamos a opção padrão (PC/Mobile) ou imagem não enviada */
+window.addEventListener('resize', ()=>{
+  if(elTipoFundo.value === 'padrao' || (elTipoFundo.value === 'imagem' && !fundoImagemDataURL)) {
+    aplicarFundo(elTermo, false);
+  }
+});
+
+/* ========================= FUNÇÕES ========================= */
 
 function gerar(){
-  let valor=Number(elValor.value||0); if(valor<0) valor=0; if(valor>MAX) valor=MAX;
-  const tema=document.getElementById('temaInput').value||'Meta Financeira';
-  elTemaTitulo.textContent=tema;
-  elConfig.style.display='none'; elTermo.style.display='block';
-  aplicarFundo(elTermo,false);
-  const prim=elTuboCor.value||'#1E90FF';
-  preench.style.background=`linear-gradient(90deg,${prim},#00CED1)`;
+  let valor = Number(elValor.value || 0);
+  if(valor < 0) valor = 0;
+  if(valor > MAX) valor = MAX;
+  const tema = document.getElementById('temaInput').value || 'Meta Financeira';
+  elTemaTitulo.textContent = tema;
+
+  elConfig.style.display = 'none';
+  elTermo.style.display = 'block';
+  aplicarFundo(elTermo, false);
+
+  const prim = elTuboCor.value || '#1E90FF';
+  preench.style.background = `linear-gradient(90deg, ${prim}, #00CED1)`;
+
   criarRegua();
 
-  const W=container.clientWidth; const alvo=W*(valor/MAX);
+  const W = container.clientWidth;
+  const alvo = W * (valor / MAX);
+
   let t0;
   function animar(ts){
-    if(!t0) t0=ts; const dt=ts-t0; const dur=1800;
-    const p=Math.min(1,dt/dur); const ease=1-Math.pow(1-p,3);
-    const x=alvo*ease;
-    preench.style.width=x+'px';
-    const valNow=valor*ease; const percNow=Math.round(valNow/MAX*100);
-    elTopoValor.textContent=`R$ ${valNow.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2})} (${percNow}%)`;
-    const amp=Math.max(6,Math.min(12,container.clientHeight*0.15));
-    const fase=dt*0.012; const yOffset=amp*Math.sin(fase);
-    bolinha.style.left=x+'px'; bolinha.style.top=`calc(50% + ${yOffset}px)`;
-    marcador.style.left=x+'px';
+    if(!t0) t0 = ts;
+    const dt = ts - t0;
+    const dur = 1800;
+    const p = Math.min(1, dt / dur);
+    const ease = 1 - Math.pow(1 - p, 3);
+    const x = alvo * ease;
+
+    preench.style.width = x + 'px';
+
+    const valNow = valor * ease;
+    const percNow = Math.round(valNow / MAX * 100);
+    elTopoValor.textContent = `R$ ${valNow.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2})} (${percNow}%)`;
+    elPorcAbaixo.textContent = `${percNow}%`;
+
+    valorCentro.textContent = `R$ ${valNow.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2})}`;
+
+    const amp = Math.max(6, Math.min(12, container.clientHeight * 0.15));
+    const fase = dt * 0.012;
+    const yOffset = amp * Math.sin(fase);
+
+    bolinha.style.left = x + 'px';
+    bolinha.style.top = `calc(50% + ${yOffset}px)`;
+    marcador.style.left = x + 'px';
+
     animarRuler(x);
-    if(p<1) requestAnimationFrame(animar);
-    else iniciarLoop(x);
+
+    if(p < 1) requestAnimationFrame(animar);
+    else iniciarLoopSeguimento(x);
   }
   requestAnimationFrame(animar);
 }
 
-function iniciarLoop(xFinal){
-  let t=0;
-  function loop(){ t+=16;
-    const amp=Math.max(6,Math.min(12,container.clientHeight*0.15));
-    const yOffset=amp*Math.sin(t*0.012);
-    bolinha.style.left=xFinal+'px';
-    bolinha.style.top=`calc(50% + ${yOffset}px)`;
+function iniciarLoopSeguimento(xFinal){
+  let t = 0;
+  function loop(){
+    t += 16;
+    const amp = Math.max(6, Math.min(12, container.clientHeight * 0.15));
+    const yOffset = amp * Math.sin(t * 0.012);
+    bolinha.style.left = xFinal + 'px';
+    bolinha.style.top = `calc(50% + ${yOffset}px)`;
     requestAnimationFrame(loop);
   }
   requestAnimationFrame(loop);
 }
 
-function aplicarFundo(target,isPreview){
-  const tipo=elTipoFundo.value;
-  if(tipo==='degrade'){
-    const a=elGradA.value||'#ffffff'; const b=elGradB.value||'#e6f0ff'; const dir=elGradDir.value||'to bottom';
-    target.style.background=`linear-gradient(${dir},${a},${b})`; 
-  }else{
-    if(!fundoImagemDataURL && !isPreview) target.style.backgroundImage='linear-gradient(180deg,#ffffff,#f3f6fa)';
-    else if(fundoImagemDataURL) target.style.backgroundImage=`url('${fundoImagemDataURL}')`;
-    target.style.backgroundSize='contain';
-    target.style.backgroundRepeat='no-repeat';
-    target.style.backgroundPosition='center center';
+/* Aplica o fundo à seção do termômetro (prioridade: upload > degradê > padrão PC/Mobile) */
+function aplicarFundo(target, isPreview){
+  const tipo = elTipoFundo.value;
+  if(tipo === 'degrade'){
+    const a = elGradA.value || '#ffffff';
+    const b = elGradB.value || '#e6f0ff';
+    const dir = elGradDir.value || 'to bottom';
+    target.style.backgroundImage = `linear-gradient(${dir}, ${a}, ${b})`;
+    target.style.backgroundSize = 'cover';
+    target.style.backgroundRepeat = 'no-repeat';
+    target.style.backgroundPosition = 'center center';
+  } else if(tipo === 'imagem'){
+    if(fundoImagemDataURL){
+      target.style.backgroundImage = `url('${fundoImagemDataURL}')`;
+      target.style.backgroundSize = 'contain';
+      target.style.backgroundRepeat = 'no-repeat';
+      target.style.backgroundPosition = 'center center';
+    } else {
+      // sem upload: fallback para padrão (PC/Mobile)
+      aplicarFundoPadrao(target);
+    }
+  } else {
+    // padrao automatico
+    aplicarFundoPadrao(target);
   }
 }
 
+/* Seleciona a imagem padrão correta (PC / Mobile) */
+function aplicarFundoPadrao(target){
+  if(window.innerWidth < 768){
+    // Mobile
+    target.style.backgroundImage = "url('Alvo Missoes 2025 cel.png')";
+  } else {
+    // Desktop
+    target.style.backgroundImage = "url('Alvo Missoes 2025.png')";
+  }
+  // usamos contain para evitar cortar partes importantes
+  target.style.backgroundSize = 'contain';
+  target.style.backgroundRepeat = 'no-repeat';
+  target.style.backgroundPosition = 'center center';
+}
+
+/* Cria régua  (0 a 4500 em passos de 500) */
 function criarRegua(){
-  ruler.innerHTML='';
-  const divs=9; 
+  ruler.innerHTML = '';
+  const divs = 9; // 0..9 => 10 marcas (0,500,...,4500)
   for(let i=0;i<=divs;i++){
-    const tick=document.createElement('div'); tick.className='tick'; tick.style.left=(i/divs*100)+'%';
-    const tickLabel=document.createElement('div'); tickLabel.className='tickLabel'; tickLabel.style.left=(i/divs*100)+'%';
-    tickLabel.textContent='R$ '+(i*500).toLocaleString('pt-BR');
-    ruler.appendChild(tick); ruler.appendChild(tickLabel);
+    const xPct = (i / divs) * 100;
+    const tick = document.createElement('div');
+    tick.className = 'tick';
+    tick.style.left = xPct + '%';
+    const label = document.createElement('div');
+    label.className = 'tickLabel';
+    label.style.left = xPct + '%';
+    label.textContent = 'R$ ' + (i*500).toLocaleString('pt-BR');
+    // inicial: hidden (opacity 0, transform down)
+    label.style.opacity = 0;
+    label.style.transform = 'translate(-50%,12px)';
+    ruler.appendChild(tick);
+    ruler.appendChild(label);
   }
 }
 
+/* Revela os ticks/labels conforme o preenchimento x (pixels) */
 function animarRuler(x){
   const ticks = ruler.querySelectorAll('.tick');
   const labels = ruler.querySelectorAll('.tickLabel');
-  const W=container.clientWidth;
+  const W = container.clientWidth;
   ticks.forEach((tick,i)=>{
-    if(x >= (i/9)*W){ 
-      tick.style.opacity=1; 
-      labels[i].style.opacity=1; 
-      labels[i].style.transform='translateX(-50%) translateY(-50%)'; 
+    const threshold = (i / 9) * W;
+    if(x + 1 >= threshold){ // +1 para tolerância
+      tick.style.opacity = 1;
+      labels[i].style.opacity = 1;
+      labels[i].style.transform = 'translate(-50%,-50%)';
     }
   });
 }
+
+/* Inicial: deixar o formulário visível */
+elConfig.style.display = 'flex';
+elTermo.style.display = 'none';
 </script>
 </body>
 </html>
